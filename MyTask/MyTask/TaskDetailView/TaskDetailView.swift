@@ -13,6 +13,9 @@ struct TaskDetailView: View {
     @ObservedObject var taskViewModel: TaskViewModel
     @Binding var showTaskDetailView:Bool
     @Binding var selectedTask : Task
+    @State private var showDeleteAlert : Bool = false
+    
+    
     
     var body: some View {
         NavigationStack {
@@ -28,11 +31,27 @@ struct TaskDetailView: View {
                 
                 Section {
                     Button {
-                        print("")
+                        showDeleteAlert.toggle()
                     } label: {
                         Text("Delete").fontWeight(.bold).foregroundColor(.red)
                             .frame(maxWidth: .infinity,alignment: .center)
                     }
+                    .alert("Delete Task?", isPresented: $showDeleteAlert) {
+                        Button("No") {
+                            showTaskDetailView.toggle()
+                        }
+                        
+                        Button("Yes") {
+                            if (taskViewModel.deleteTask(task: selectedTask)){
+                                showDeleteAlert.toggle()
+                                
+                            }
+                        }
+                        
+                    } message: {
+                        Text("Would you like to delete the task \(selectedTask.name)?")
+                    }
+
 
                 }
                 

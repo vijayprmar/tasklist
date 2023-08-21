@@ -13,22 +13,31 @@ struct HomeView: View {
     
     @State private var pickerFilters : [String] = ["Active","Completed"]
     
-    @State private var defaultSelectedPickerItem : String = "Active"
+    @State private var defaultPickerSelectedItem : String = "Active"
     
     @State private var showAddTaskView = false
     @State private var showTaskDetailView = false
     @State private var selectedTask:Task = Task(id: 0, name: "", description: "", isCompleted: false, finishDate: Date())
     
+    @State private var refreshTaskList:Bool = false
+    
     var body: some View {
         NavigationStack {
             
-            Picker("Picker Filter", selection: $defaultSelectedPickerItem) {
+            Picker("Picker Filter", selection: $defaultPickerSelectedItem) {
                 ForEach(pickerFilters,id: \.self){
                     Text($0)
                 }
             }.pickerStyle(.segmented)
-                .onChange(of: defaultSelectedPickerItem) { newValue in
-                    taskViewModel.getTasks(isActive: defaultSelectedPickerItem == "Active")
+                .onChange(of: defaultPickerSelectedItem) { newValue in
+                    
+                    if defaultPickerSelectedItem == "Active"{
+                        taskViewModel.getTasks(isCompleted: false)
+                    }else{
+                        taskViewModel.getTasks(isCompleted: true)
+                    }
+                    
+                   
                 }
             
             
@@ -47,10 +56,19 @@ struct HomeView: View {
                     selectedTask = task
                     showTaskDetailView.toggle()
                 }
-            }.onAppear(){
-                taskViewModel.getTasks(isActive: true)
+            }
+            .onAppear(){
+                taskViewModel.getTasks(isCompleted: false)
                 
             }
+            .onChange(of: refreshTaskList, perform: { _ in
+                if defaultPickerSelectedItem == "Active"{
+                    taskViewModel.getTasks(isCompleted: false)
+                }else{
+                    taskViewModel.getTasks(isCompleted: true)
+                }
+            })
+           
             
             .navigationTitle("Home")
             .toolbar {
@@ -64,7 +82,7 @@ struct HomeView: View {
                 }
             }
             .sheet(isPresented: $showAddTaskView) {
-                AddTaskView(taskViewModel: taskViewModel, showAddTaskView: $showAddTaskView)
+                AddTaskView(taskViewModel: taskViewModel, showAddTaskView: $showAddTaskView, refreshTaskList: $refreshTaskList)
             }
             .sheet(isPresented: $showTaskDetailView) {
                 TaskDetailView(taskViewModel: taskViewModel, showTaskDetailView: $showTaskDetailView, selectedTask: $selectedTask)
