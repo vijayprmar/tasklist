@@ -43,8 +43,7 @@ struct TaskDetailView: View {
                         
                         Button("Yes") {
                             if (taskViewModel.deleteTask(task: selectedTask)){
-                                showDeleteAlert.toggle()
-                                
+                                showDeleteAlert.toggle()   
                             }
                         }
                         
@@ -69,7 +68,11 @@ struct TaskDetailView: View {
                 
                 ToolbarItem(placement:.navigationBarTrailing) {
                     Button{
-                        print("Add button tapped")
+                        
+                        if taskViewModel.updateTask(task: selectedTask){
+                            showTaskDetailView = false
+                        }
+                        
                     } label: {
                         Text("Update")
                     }
@@ -84,6 +87,6 @@ struct TaskDetailView: View {
 
 struct TaskDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        TaskDetailView(taskViewModel: TaskViewModel(), showTaskDetailView: .constant(false), selectedTask: .constant(Task.createMockTasks().first!))
+        TaskDetailView(taskViewModel: TaskViewModelFactory.createTaskViewModel(), showTaskDetailView: .constant(false), selectedTask: .constant(Task.createEmptyTasks()))
     }
 }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     
-    @StateObject var taskViewModel:TaskViewModel = TaskViewModel()
+    @StateObject var taskViewModel:TaskViewModel = TaskViewModelFactory.createTaskViewModel()
     
     @State private var pickerFilters : [String] = ["Active","Completed"]
     
@@ -17,8 +17,7 @@ struct HomeView: View {
     
     @State private var showAddTaskView = false
     @State private var showTaskDetailView = false
-    @State private var selectedTask:Task = Task(id: 0, name: "", description: "", isCompleted: false, finishDate: Date())
-    
+    @State private var selectedTask:Task = Task.createEmptyTasks()
     @State private var refreshTaskList:Bool = false
     
     var body: some View {

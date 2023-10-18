@@ -7,12 +7,12 @@
 
 import CoreData
 
-struct PersistenceController {
+final class PersistenceController {
     static let shared = PersistenceController()
 
     
-    let container: NSPersistentContainer
-
+    private let container: NSPersistentContainer
+    let viewContext: NSManagedObjectContext
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "MyTask")
         if inMemory {
@@ -25,5 +25,6 @@ struct PersistenceController {
             }
         })
         container.viewContext.automaticallyMergesChangesFromParent = true
+        viewContext = container.viewContext
     }
 }
